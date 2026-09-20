@@ -1,5 +1,4 @@
 package listener;
-
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -34,37 +33,84 @@ public class DatabaseListener implements ServletContextListener {
 
         dataSource = new HikariDataSource(config);
 
-        // Create users table
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement("""
-                CREATE TABLE IF NOT EXISTS users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(100) NOT NULL,
-                    email VARCHAR(150) NOT NULL UNIQUE,
-                    password VARCHAR(255) NOT NULL,
-                    role VARCHAR(20) NOT NULL
-                )
-                """)) {
+        try (Connection connection = dataSource.getConnection()) {
 
-            statement.execute();
+            runSchema(connection, event.getServletContext());
 
-            System.out.println("Users table created successfully!");
-
-            // Run seed.sql
             runSeedData(connection, event.getServletContext());
 
         } catch (SQLException e) {
+
             throw new RuntimeException(
-                    "Unable to create users table",
+                    "Unable to initialize database",
                     e
             );
         }
 
-        event.getServletContext().setAttribute("dataSource", dataSource);
+        event.getServletContext().setAttribute(
+                "dataSource",
+                dataSource
+        );
 
         System.out.println(
                 "Shakthi Mart database connected successfully!"
         );
+    }
+
+    private void runSchema(
+            Connection connection,
+            ServletContext context) {
+
+        try (InputStream inputStream =
+                     context.getResourceAsStream("/sql/schema.sql")) {
+
+            if (inputStream == null) {
+                throw new RuntimeException(
+                        "schema.sql file not found."
+                );
+            }
+
+            String sql;
+
+            try (BufferedReader reader =
+                         new BufferedReader(
+                                 new InputStreamReader(
+                                         inputStream,
+                                         StandardCharsets.UTF_8))) {
+
+                sql = reader.lines()
+                        .filter(line ->
+                                !line.trim().startsWith("--"))
+                        .collect(Collectors.joining("\n"));
+            }
+
+            String[] statements = sql.split(";");
+
+            for (String statementText : statements) {
+
+                if (statementText.isBlank()) {
+                    continue;
+                }
+
+                try (PreparedStatement statement =
+                             connection.prepareStatement(
+                                     statementText.trim())) {
+
+                    statement.execute();
+                }
+            }
+
+            System.out.println(
+                    "Database schema created successfully!"
+            );
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(
+                    "Unable to execute schema.sql",
+                    e
+            );
+        }
     }
 
     private void runSeedData(
@@ -89,7 +135,8 @@ public class DatabaseListener implements ServletContextListener {
                                          StandardCharsets.UTF_8))) {
 
                 sql = reader.lines()
-                        .filter(line -> !line.trim().startsWith("--"))
+                        .filter(line ->
+                                !line.trim().startsWith("--"))
                         .collect(Collectors.joining("\n"));
             }
 
@@ -109,6 +156,7 @@ public class DatabaseListener implements ServletContextListener {
             }
 
         } catch (Exception e) {
+
             throw new RuntimeException(
                     "Unable to execute seed.sql",
                     e
@@ -117,7 +165,8 @@ public class DatabaseListener implements ServletContextListener {
     }
 
     @Override
-    public void contextDestroyed(ServletContextEvent event) {
+    public void contextDestroyed(
+            ServletContextEvent event) {
 
         if (dataSource != null) {
             dataSource.close();
