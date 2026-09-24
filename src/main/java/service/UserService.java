@@ -18,4 +18,9 @@ public class UserService {
     public User login(String email) {
         return userDAO.findByEmail(email);
     }
+
+    public User getUserById(int id) {
+        return userDAO.findById(id);
+    }
 }
+

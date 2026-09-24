@@ -22,12 +22,14 @@ public class UserDAOImpl implements UserDAO {
     public void save(User user) {
 
         String sql = """
-                INSERT INTO users (name, email, password, role)
+                INSERT INTO users
+                (name, email, password, role)
                 VALUES (?, ?, ?, ?)
                 """;
 
         try (Connection connection = DBUtil.getConnection(context);
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
             statement.setString(1, user.getName());
             statement.setString(2, user.getEmail());
@@ -37,35 +39,37 @@ public class UserDAOImpl implements UserDAO {
             statement.executeUpdate();
 
         } catch (Exception e) {
-            throw new RuntimeException("Unable to save user", e);
+            throw new RuntimeException(
+                    "Unable to save user", e);
         }
     }
 
     @Override
     public User findByEmail(String email) {
 
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = """
+                SELECT id, name, email, password, role
+                FROM users
+                WHERE email = ?
+                """;
 
         try (Connection connection = DBUtil.getConnection(context);
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
             statement.setString(1, email);
 
-            try (ResultSet resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet =
+                         statement.executeQuery()) {
 
                 if (resultSet.next()) {
-                    return new User(
-                            resultSet.getInt("id"),
-                            resultSet.getString("name"),
-                            resultSet.getString("email"),
-                            resultSet.getString("password"),
-                            resultSet.getString("role")
-                    );
+                    return mapUser(resultSet);
                 }
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Unable to find user", e);
+            throw new RuntimeException(
+                    "Unable to find user by email", e);
         }
 
         return null;
@@ -74,28 +78,29 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User findById(int id) {
 
-        String sql = "SELECT * FROM users WHERE id = ?";
+        String sql = """
+                SELECT id, name, email, password, role
+                FROM users
+                WHERE id = ?
+                """;
 
         try (Connection connection = DBUtil.getConnection(context);
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
             statement.setInt(1, id);
 
-            try (ResultSet resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet =
+                         statement.executeQuery()) {
 
                 if (resultSet.next()) {
-                    return new User(
-                            resultSet.getInt("id"),
-                            resultSet.getString("name"),
-                            resultSet.getString("email"),
-                            resultSet.getString("password"),
-                            resultSet.getString("role")
-                    );
+                    return mapUser(resultSet);
                 }
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Unable to find user", e);
+            throw new RuntimeException(
+                    "Unable to find user by id", e);
         }
 
         return null;
@@ -104,27 +109,40 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public List<User> findAll() {
 
-        String sql = "SELECT * FROM users";
+        String sql = """
+                SELECT id, name, email, password, role
+                FROM users
+                """;
+
         List<User> users = new ArrayList<>();
 
         try (Connection connection = DBUtil.getConnection(context);
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
+             PreparedStatement statement =
+                     connection.prepareStatement(sql);
+             ResultSet resultSet =
+                     statement.executeQuery()) {
 
             while (resultSet.next()) {
-                users.add(new User(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("email"),
-                        resultSet.getString("password"),
-                        resultSet.getString("role")
-                ));
+                users.add(mapUser(resultSet));
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Unable to fetch users", e);
+            throw new RuntimeException(
+                    "Unable to fetch users", e);
         }
 
         return users;
+    }
+
+    private User mapUser(ResultSet resultSet)
+            throws Exception {
+
+        return new User(
+                resultSet.getInt("id"),
+                resultSet.getString("name"),
+                resultSet.getString("email"),
+                resultSet.getString("password"),
+                resultSet.getString("role")
+        );
     }
 }
