@@ -1,2 +1,6 @@
 target/
 cp.txt
+
+.env
+*.env
+secrets.properties
