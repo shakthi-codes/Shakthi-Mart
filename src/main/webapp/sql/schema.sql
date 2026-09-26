@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(20) NOT NULL
 );
 
+
 CREATE TABLE IF NOT EXISTS services (
     id INT AUTO_INCREMENT PRIMARY KEY,
     creator_id INT NOT NULL,
@@ -20,6 +21,7 @@ CREATE TABLE IF NOT EXISTS services (
         REFERENCES users(id)
 );
 
+
 CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     buyer_id INT NOT NULL,
@@ -30,6 +32,7 @@ CREATE TABLE IF NOT EXISTS orders (
     FOREIGN KEY (buyer_id)
         REFERENCES users(id)
 );
+
 
 CREATE TABLE IF NOT EXISTS order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -44,6 +47,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (service_id)
         REFERENCES services(id)
 );
+
 
 CREATE TABLE IF NOT EXISTS cart_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -61,6 +65,7 @@ CREATE TABLE IF NOT EXISTS cart_items (
         REFERENCES services(id)
 );
 
+
 CREATE TABLE IF NOT EXISTS reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
     buyer_id INT NOT NULL,
@@ -75,6 +80,7 @@ CREATE TABLE IF NOT EXISTS reviews (
     FOREIGN KEY (service_id)
         REFERENCES services(id)
 );
+
 
 CREATE TABLE IF NOT EXISTS wishlist_items (
     id INT AUTO_INCREMENT PRIMARY KEY,

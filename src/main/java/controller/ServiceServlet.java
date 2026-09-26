@@ -6,9 +6,12 @@ import dao.ServiceDAO;
 import dao.ServiceDAOImpl;
 import dao.UserDAO;
 import dao.UserDAOImpl;
+import dao.ReviewDAO;
+import dao.ReviewDAOImpl;
 
 import model.Service;
 import model.User;
+import model.Review;
 
 import service.ServiceManager;
 
@@ -36,6 +39,7 @@ public class ServiceServlet extends HttpServlet {
 
     private ServiceManager serviceManager;
     private CartDAO cartDAO;
+    private ReviewDAO reviewDAO;
 
     @Override
     public void init() {
@@ -48,6 +52,9 @@ public class ServiceServlet extends HttpServlet {
 
         cartDAO =
                 new CartDAOImpl(getServletContext());
+
+        reviewDAO =
+                new ReviewDAOImpl(getServletContext());
     }
 
     @Override
@@ -102,13 +109,6 @@ public class ServiceServlet extends HttpServlet {
             boolean searchMatch = true;
             boolean categoryMatch = true;
 
-            /*
-             * SEARCH BY:
-             * Service Name
-             * Description
-             * Category
-             */
-
             if (!search.isEmpty()) {
 
                 String name =
@@ -140,10 +140,6 @@ public class ServiceServlet extends HttpServlet {
                                 .contains(keyword);
             }
 
-            /*
-             * CATEGORY FILTER
-             */
-
             if (!"All".equalsIgnoreCase(category)) {
 
                 String serviceCategory =
@@ -157,13 +153,18 @@ public class ServiceServlet extends HttpServlet {
             }
 
             if (searchMatch && categoryMatch) {
-
                 services.add(service);
             }
         }
 
         String message =
                 request.getParameter("message");
+
+        String reviewMessage =
+                request.getParameter("review");
+
+        String reviewError =
+                request.getParameter("error");
 
         response.setContentType(
                 "text/html;charset=UTF-8");
@@ -239,6 +240,24 @@ public class ServiceServlet extends HttpServlet {
             .message {
                 background: #e8f5e9;
                 color: #2e7d32;
+                padding: 14px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                font-weight: bold;
+            }
+
+            .review-success {
+                background: #e8f5e9;
+                color: #2e7d32;
+                padding: 14px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                font-weight: bold;
+            }
+
+            .review-error {
+                background: #ffebee;
+                color: #c62828;
                 padding: 14px;
                 border-radius: 8px;
                 margin-bottom: 20px;
@@ -379,7 +398,7 @@ public class ServiceServlet extends HttpServlet {
             .services-grid {
                 display: grid;
                 grid-template-columns:
-                    repeat(auto-fit, minmax(280px, 1fr));
+                    repeat(auto-fit, minmax(300px, 1fr));
                 gap: 20px;
             }
 
@@ -439,6 +458,60 @@ public class ServiceServlet extends HttpServlet {
                 border-radius: 7px;
                 display: inline-block;
                 font-weight: bold;
+            }
+
+            .rating-box {
+                background: #fff8e1;
+                padding: 12px;
+                border-radius: 8px;
+                margin-top: 12px;
+            }
+
+            .rating-stars {
+                color: #f9a825;
+                font-size: 22px;
+                letter-spacing: 2px;
+            }
+
+            .review-section {
+                margin-top: 18px;
+                padding-top: 15px;
+                border-top: 1px solid #ddd;
+            }
+
+            .review-section h4 {
+                color: #6a1b9a;
+                margin-bottom: 8px;
+            }
+
+            .review-form {
+                background: #faf7ff;
+                padding: 12px;
+                border-radius: 8px;
+                margin-top: 10px;
+            }
+
+            .review-form select,
+            .review-form textarea {
+                margin-bottom: 8px;
+            }
+
+            .review-item {
+                background: #f5f3ff;
+                padding: 10px;
+                border-radius: 8px;
+                margin-top: 8px;
+            }
+
+            .review-item .stars {
+                color: #f9a825;
+                font-size: 18px;
+            }
+
+            .review-item .comment {
+                color: #555;
+                margin-top: 5px;
+                line-height: 1.4;
             }
 
             .actions {
@@ -561,6 +634,36 @@ public class ServiceServlet extends HttpServlet {
             }
 
             out.println("</div>");
+        }
+
+        /*
+         * REVIEW MESSAGE
+         */
+
+        if ("success".equals(reviewMessage)) {
+
+            out.println(
+                    "<div class='review-success'>" +
+                    "⭐ Thank you! Your rating and feedback " +
+                    "were added successfully!" +
+                    "</div>");
+        }
+
+        if ("invalid-rating".equals(reviewError)) {
+
+            out.println(
+                    "<div class='review-error'>" +
+                    "Please select a valid rating from 1 to 5." +
+                    "</div>");
+        }
+
+        if ("review-failed".equals(reviewError)) {
+
+            out.println(
+                    "<div class='review-error'>" +
+                    "Unable to save your feedback. " +
+                    "Please try again." +
+                    "</div>");
         }
 
         /*
@@ -826,6 +929,18 @@ public class ServiceServlet extends HttpServlet {
                                     service.getId());
                 }
 
+                /*
+                 * REVIEW DATA
+                 */
+
+                double averageRating =
+                        reviewDAO.getAverageRating(
+                                service.getId());
+
+                List<Review> reviews =
+                        reviewDAO.findByServiceId(
+                                service.getId());
+
                 out.println(
                         "<div class='card'>");
 
@@ -883,6 +998,44 @@ public class ServiceServlet extends HttpServlet {
                                 "%.2f",
                                 service.getPrice()) +
                         "</p>");
+
+                /*
+                 * RATING
+                 */
+
+                out.println(
+                        "<div class='rating-box'>");
+
+                out.println(
+                        "<strong>⭐ Rating</strong>");
+
+                if (averageRating > 0) {
+
+                    out.println(
+                            "<div class='rating-stars'>" +
+                            getStars(averageRating) +
+                            "</div>");
+
+                    out.println(
+                            "<strong>" +
+                            String.format(
+                                    "%.1f",
+                                    averageRating) +
+                            " / 5</strong>");
+
+                    out.println(
+                            " (" +
+                            reviews.size() +
+                            " review(s))");
+
+                } else {
+
+                    out.println(
+                            "<p>No ratings yet. " +
+                            "Be the first to review! ⭐</p>");
+                }
+
+                out.println("</div>");
 
                 /*
                  * WISHLIST SCORE
@@ -998,6 +1151,105 @@ public class ServiceServlet extends HttpServlet {
                         "</button>");
 
                 out.println("</form>");
+
+                out.println("</div>");
+
+                /*
+                 * REVIEW FORM
+                 */
+
+                out.println(
+                        "<div class='review-section'>");
+
+                out.println(
+                        "<h4>⭐ Give Your Feedback</h4>");
+
+                out.println(
+                        "<form method='post' " +
+                        "action='" +
+                        request.getContextPath() +
+                        "/review' " +
+                        "class='review-form'>");
+
+                out.println(
+                        "<input type='hidden' " +
+                        "name='serviceId' value='" +
+                        service.getId() +
+                        "'>");
+
+                out.println("<label>Rating</label>");
+
+                out.println(
+                        "<select name='rating' required>");
+
+                out.println(
+                        "<option value=''>" +
+                        "Select rating</option>");
+
+                out.println(
+                        "<option value='5'>⭐⭐⭐⭐⭐ Excellent</option>");
+
+                out.println(
+                        "<option value='4'>⭐⭐⭐⭐ Very Good</option>");
+
+                out.println(
+                        "<option value='3'>⭐⭐⭐ Good</option>");
+
+                out.println(
+                        "<option value='2'>⭐⭐ Fair</option>");
+
+                out.println(
+                        "<option value='1'>⭐ Poor</option>");
+
+                out.println("</select>");
+
+                out.println(
+                        "<textarea name='comment' " +
+                        "rows='3' " +
+                        "placeholder='Write your feedback...'></textarea>");
+
+                out.println(
+                        "<button type='submit'>" +
+                        "⭐ Submit Review</button>");
+
+                out.println("</form>");
+
+                /*
+                 * EXISTING REVIEWS
+                 */
+
+                if (!reviews.isEmpty()) {
+
+                    out.println(
+                            "<h4>💬 Customer Feedback</h4>");
+
+                    for (Review review : reviews) {
+
+                        out.println(
+                                "<div class='review-item'>");
+
+                        out.println(
+                                "<div class='stars'>" +
+                                getStarString(
+                                        review.getRating()) +
+                                "</div>");
+
+                        if (review.getComment() != null &&
+                                !review.getComment()
+                                        .trim()
+                                        .isEmpty()) {
+
+                            out.println(
+                                    "<div class='comment'>" +
+                                    "💬 " +
+                                    escapeHtml(
+                                            review.getComment()) +
+                                    "</div>");
+                        }
+
+                        out.println("</div>");
+                    }
+                }
 
                 out.println("</div>");
 
@@ -1125,14 +1377,9 @@ public class ServiceServlet extends HttpServlet {
                 new Service();
 
         service.setCreatorId(userId);
-
         service.setName(name);
-
-        service.setDescription(
-                description);
-
+        service.setDescription(description);
         service.setPrice(price);
-
         service.setCategory(category);
 
         serviceManager.addService(service);
@@ -1207,13 +1454,10 @@ public class ServiceServlet extends HttpServlet {
         ) {
 
             statement.setInt(1, userId);
-
             statement.setInt(2, serviceId);
-
             statement.executeUpdate();
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
     }
@@ -1254,13 +1498,11 @@ public class ServiceServlet extends HttpServlet {
         ) {
 
             statement.setInt(1, userId);
-
             statement.setInt(2, serviceId);
 
             statement.executeUpdate();
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
     }
@@ -1289,7 +1531,6 @@ public class ServiceServlet extends HttpServlet {
         ) {
 
             statement.setInt(1, userId);
-
             statement.setInt(2, serviceId);
 
             try (
@@ -1301,7 +1542,6 @@ public class ServiceServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 
@@ -1337,13 +1577,11 @@ public class ServiceServlet extends HttpServlet {
             ) {
 
                 if (resultSet.next()) {
-
                     return resultSet.getInt(1);
                 }
             }
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 
@@ -1412,7 +1650,6 @@ public class ServiceServlet extends HttpServlet {
                     if (!resultSet.next()) {
 
                         connection.rollback();
-
                         return;
                     }
 
@@ -1433,7 +1670,6 @@ public class ServiceServlet extends HttpServlet {
             ) {
 
                 statement.setInt(1, buyerId);
-
                 statement.setDouble(2, price);
 
                 statement.executeUpdate();
@@ -1446,7 +1682,6 @@ public class ServiceServlet extends HttpServlet {
                     if (!keys.next()) {
 
                         connection.rollback();
-
                         return;
                     }
 
@@ -1462,11 +1697,8 @@ public class ServiceServlet extends HttpServlet {
             ) {
 
                 statement.setInt(1, orderId);
-
                 statement.setInt(2, serviceId);
-
                 statement.setInt(3, 1);
-
                 statement.setDouble(4, price);
 
                 statement.executeUpdate();
@@ -1475,7 +1707,6 @@ public class ServiceServlet extends HttpServlet {
             connection.commit();
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
     }
@@ -1520,6 +1751,53 @@ public class ServiceServlet extends HttpServlet {
             default:
                 return "🛠️";
         }
+    }
+
+    /*
+     * AVERAGE RATING STARS
+     */
+
+    private String getStars(
+            double rating) {
+
+        int rounded =
+                (int) Math.round(rating);
+
+        StringBuilder stars =
+                new StringBuilder();
+
+        for (int i = 1; i <= 5; i++) {
+
+            if (i <= rounded) {
+                stars.append("★");
+            } else {
+                stars.append("☆");
+            }
+        }
+
+        return stars.toString();
+    }
+
+    /*
+     * REVIEW STARS
+     */
+
+    private String getStarString(
+            int rating) {
+
+        StringBuilder stars =
+                new StringBuilder();
+
+        for (int i = 1; i <= 5; i++) {
+
+            if (i <= rating) {
+                stars.append("★");
+            } else {
+                stars.append("☆");
+            }
+        }
+
+        return stars.toString();
     }
 
     /*

@@ -6,18 +6,21 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(20) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS products (
+
+CREATE TABLE IF NOT EXISTS services (
     id INT AUTO_INCREMENT PRIMARY KEY,
     seller_id INT NOT NULL,
     name VARCHAR(150) NOT NULL,
     description VARCHAR(1000),
     price DECIMAL(10,2) NOT NULL,
-    stock_qty INT NOT NULL DEFAULT 0,
     category VARCHAR(100),
     image_url VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (seller_id) REFERENCES users(id)
+
+    FOREIGN KEY (seller_id)
+        REFERENCES users(id)
 );
+
 
 CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -25,37 +28,55 @@ CREATE TABLE IF NOT EXISTS orders (
     total_amount DECIMAL(10,2) NOT NULL,
     status VARCHAR(30) NOT NULL DEFAULT 'PENDING',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (buyer_id) REFERENCES users(id)
+
+    FOREIGN KEY (buyer_id)
+        REFERENCES users(id)
 );
+
 
 CREATE TABLE IF NOT EXISTS order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
-    product_id INT NOT NULL,
+    service_id INT NOT NULL,
     quantity INT NOT NULL,
     price DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
+
+    FOREIGN KEY (order_id)
+        REFERENCES orders(id),
+
+    FOREIGN KEY (service_id)
+        REFERENCES services(id)
 );
+
 
 CREATE TABLE IF NOT EXISTS cart_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     buyer_id INT NOT NULL,
-    product_id INT NOT NULL,
+    service_id INT NOT NULL,
     quantity INT NOT NULL DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (buyer_id) REFERENCES users(id),
-    FOREIGN KEY (product_id) REFERENCES products(id),
-    UNIQUE (buyer_id, product_id)
+
+    FOREIGN KEY (buyer_id)
+        REFERENCES users(id),
+
+    FOREIGN KEY (service_id)
+        REFERENCES services(id),
+
+    UNIQUE (buyer_id, service_id)
 );
+
 
 CREATE TABLE IF NOT EXISTS reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
     buyer_id INT NOT NULL,
-    product_id INT NOT NULL,
+    service_id INT NOT NULL,
     rating INT NOT NULL,
     comment VARCHAR(1000),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (buyer_id) REFERENCES users(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
+
+    FOREIGN KEY (buyer_id)
+        REFERENCES users(id),
+
+    FOREIGN KEY (service_id)
+        REFERENCES services(id)
 );

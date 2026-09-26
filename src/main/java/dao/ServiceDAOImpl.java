@@ -49,6 +49,7 @@ public class ServiceDAOImpl implements ServiceDAO {
         String sql = """
                 SELECT id, creator_id, name, description, price, category
                 FROM services
+                ORDER BY id DESC
                 """;
 
         List<Service> services = new ArrayList<>();
@@ -58,7 +59,17 @@ public class ServiceDAOImpl implements ServiceDAO {
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                services.add(mapService(resultSet));
+
+                Service service = new Service();
+
+                service.setId(resultSet.getInt("id"));
+                service.setCreatorId(resultSet.getInt("creator_id"));
+                service.setName(resultSet.getString("name"));
+                service.setDescription(resultSet.getString("description"));
+                service.setPrice(resultSet.getDouble("price"));
+                service.setCategory(resultSet.getString("category"));
+
+                services.add(service);
             }
 
         } catch (Exception e) {
@@ -75,6 +86,7 @@ public class ServiceDAOImpl implements ServiceDAO {
                 SELECT id, creator_id, name, description, price, category
                 FROM services
                 WHERE creator_id = ?
+                ORDER BY id DESC
                 """;
 
         List<Service> services = new ArrayList<>();
@@ -87,7 +99,17 @@ public class ServiceDAOImpl implements ServiceDAO {
             try (ResultSet resultSet = statement.executeQuery()) {
 
                 while (resultSet.next()) {
-                    services.add(mapService(resultSet));
+
+                    Service service = new Service();
+
+                    service.setId(resultSet.getInt("id"));
+                    service.setCreatorId(resultSet.getInt("creator_id"));
+                    service.setName(resultSet.getString("name"));
+                    service.setDescription(resultSet.getString("description"));
+                    service.setPrice(resultSet.getDouble("price"));
+                    service.setCategory(resultSet.getString("category"));
+
+                    services.add(service);
                 }
             }
 
@@ -115,12 +137,22 @@ public class ServiceDAOImpl implements ServiceDAO {
             try (ResultSet resultSet = statement.executeQuery()) {
 
                 if (resultSet.next()) {
-                    return mapService(resultSet);
+
+                    Service service = new Service();
+
+                    service.setId(resultSet.getInt("id"));
+                    service.setCreatorId(resultSet.getInt("creator_id"));
+                    service.setName(resultSet.getString("name"));
+                    service.setDescription(resultSet.getString("description"));
+                    service.setPrice(resultSet.getDouble("price"));
+                    service.setCategory(resultSet.getString("category"));
+
+                    return service;
                 }
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Unable to find service", e);
+            throw new RuntimeException("Unable to fetch service", e);
         }
 
         return null;
@@ -136,7 +168,6 @@ public class ServiceDAOImpl implements ServiceDAO {
                     price = ?,
                     category = ?
                 WHERE id = ?
-                AND creator_id = ?
                 """;
 
         try (Connection connection = DBUtil.getConnection(context);
@@ -147,7 +178,6 @@ public class ServiceDAOImpl implements ServiceDAO {
             statement.setDouble(3, service.getPrice());
             statement.setString(4, service.getCategory());
             statement.setInt(5, service.getId());
-            statement.setInt(6, service.getCreatorId());
 
             statement.executeUpdate();
 
@@ -159,28 +189,20 @@ public class ServiceDAOImpl implements ServiceDAO {
     @Override
     public void delete(int id) {
 
-        String sql = "DELETE FROM services WHERE id = ?";
+        String sql = """
+                DELETE FROM services
+                WHERE id = ?
+                """;
 
         try (Connection connection = DBUtil.getConnection(context);
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, id);
+
             statement.executeUpdate();
 
         } catch (Exception e) {
             throw new RuntimeException("Unable to delete service", e);
         }
-    }
-
-    private Service mapService(ResultSet resultSet) throws Exception {
-
-        return new Service(
-                resultSet.getInt("id"),
-                resultSet.getInt("creator_id"),
-                resultSet.getString("name"),
-                resultSet.getString("description"),
-                resultSet.getDouble("price"),
-                resultSet.getString("category")
-        );
     }
 }

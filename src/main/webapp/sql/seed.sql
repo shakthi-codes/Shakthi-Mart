@@ -36,11 +36,11 @@ WHERE NOT EXISTS (
     SELECT 1 FROM users WHERE email = 'sanjay@shakthimart.com'
 );
 
+
 -- ============================================
 -- SERVICES
 -- ============================================
 
--- 1. Web Development
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -51,7 +51,7 @@ SELECT id,
 FROM users
 WHERE email = 'arun@shakthimart.com';
 
--- 2. Java Programming
+
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -62,7 +62,7 @@ SELECT id,
 FROM users
 WHERE email = 'kavin@shakthimart.com';
 
--- 3. Graphic Design
+
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -73,7 +73,7 @@ SELECT id,
 FROM users
 WHERE email = 'meena@shakthimart.com';
 
--- 4. UI/UX Design
+
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -84,7 +84,7 @@ SELECT id,
 FROM users
 WHERE email = 'priya@shakthimart.com';
 
--- 5. Academic Tutoring
+
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -95,7 +95,7 @@ SELECT id,
 FROM users
 WHERE email = 'sanjay@shakthimart.com';
 
--- 6. Python Programming
+
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -106,7 +106,7 @@ SELECT id,
 FROM users
 WHERE email = 'kavin@shakthimart.com';
 
--- 7. Digital Marketing
+
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -117,7 +117,7 @@ SELECT id,
 FROM users
 WHERE email = 'meena@shakthimart.com';
 
--- 8. Content Writing
+
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -128,7 +128,7 @@ SELECT id,
 FROM users
 WHERE email = 'sanjay@shakthimart.com';
 
--- 9. Video Editing
+
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -139,7 +139,7 @@ SELECT id,
 FROM users
 WHERE email = 'priya@shakthimart.com';
 
--- 10. Data Analysis
+
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -150,7 +150,7 @@ SELECT id,
 FROM users
 WHERE email = 'arun@shakthimart.com';
 
--- 11. Business Presentation
+
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -161,7 +161,7 @@ SELECT id,
 FROM users
 WHERE email = 'meena@shakthimart.com';
 
--- 12. Resume Design
+
 INSERT INTO services
 (creator_id, name, description, price, category)
 SELECT id,
@@ -171,3 +171,57 @@ SELECT id,
        'Design'
 FROM users
 WHERE email = 'priya@shakthimart.com';
+
+-- ============================================
+-- SAMPLE REVIEWS / RATINGS
+-- ============================================
+
+INSERT INTO reviews (buyer_id, service_id, rating, comment)
+SELECT
+    u.id,
+    s.id,
+    5,
+    'Excellent service! Very helpful and professional.'
+FROM users u
+JOIN services s ON s.name = 'Web Development'
+WHERE u.email = 'arun@shakthimart.com';
+
+INSERT INTO reviews (buyer_id, service_id, rating, comment)
+SELECT
+    u.id,
+    s.id,
+    4,
+    'Good Java programming support. Easy to understand.'
+FROM users u
+JOIN services s ON s.name = 'Java Programming'
+WHERE u.email = 'kavin@shakthimart.com';
+
+INSERT INTO reviews (buyer_id, service_id, rating, comment)
+SELECT
+    u.id,
+    s.id,
+    5,
+    'Beautiful design and great creative work!'
+FROM users u
+JOIN services s ON s.name = 'Graphic Design'
+WHERE u.email = 'meena@shakthimart.com';
+
+INSERT INTO reviews (buyer_id, service_id, rating, comment)
+SELECT
+    u.id,
+    s.id,
+    4,
+    'The UI design was clean and user friendly.'
+FROM users u
+JOIN services s ON s.name = 'UI/UX Design'
+WHERE u.email = 'priya@shakthimart.com';
+
+INSERT INTO reviews (buyer_id, service_id, rating, comment)
+SELECT
+    u.id,
+    s.id,
+    5,
+    'Very useful tutoring and clear explanations.'
+FROM users u
+JOIN services s ON s.name = 'Academic Tutoring'
+WHERE u.email = 'sanjay@shakthimart.com';
