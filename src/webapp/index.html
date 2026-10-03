@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shakthi Mart</title>
+</head>
+<body>
+    <h1>Welcome to Shakthi Mart</h1>
+    <button id="chatButton">?? Chat</button>
+    <div id="chatPanel" style="display: none;">
+        <h2>Shakthi Mart Assistant</h2>
+        <div id="chatMessages"></div>
+        <input type="text" id="chatInput" placeholder="Ask about services...">
+        <button id="sendButton">Send</button>
+    </div>
+</body>
+</html>
+<script>
+const chatButton = document.getElementById("chatButton");
+const chatPanel = document.getElementById("chatPanel");
+chatButton.addEventListener("click", function () {
+    if (chatPanel.style.display === "none") {
+        chatPanel.style.display = "block";
+    } else {
+        chatPanel.style.display = "none";
+    }
+});
+</script>
+<script>
+const sendButton = document.getElementById("sendButton");
+const chatInput = document.getElementById("chatInput");
+const chatMessages = document.getElementById("chatMessages");
+sendButton.addEventListener("click", async function () {
+    const message = chatInput.value.trim();
+    if (!message) {
+        return;
+    }
+    chatMessages.innerHTML += "<p><b>You:</b> " + message + "</p>";
+    const response = await fetch("api/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "message=" + encodeURIComponent(message)
+    });
+    const data = await response.json();
+    if (data.success) {
+        chatMessages.innerHTML += "<p><b>Assistant:</b> " + data.reply + "</p>";
+    } else {
+        chatMessages.innerHTML += "<p><b>Error:</b> " + data.error + "</p>";
+    }
+    chatInput.value = "";
+});
+</script>
