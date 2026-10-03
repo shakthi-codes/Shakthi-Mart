@@ -76,6 +76,20 @@
             </resource>
         </resources>
 
+        <plugins>
+
+            <!-- Checkstyle -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <failOnViolation>false</failOnViolation>
+                </configuration>
+            </plugin>
+
+        </plugins>
+
     </build>
 
 </project>
