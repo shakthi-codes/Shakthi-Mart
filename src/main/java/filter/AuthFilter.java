@@ -31,7 +31,7 @@ public class AuthFilter implements Filter {
 
         boolean publicPage =
                 
-                path.equals("/login") ||
+                path.equals("/api/chat") || path.equals("/login") ||
                 path.equals("/register");
 
         if (loggedIn || publicPage) {
