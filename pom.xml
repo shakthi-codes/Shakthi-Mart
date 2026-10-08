@@ -69,13 +69,6 @@
 
     <build>
 
-        <resources>
-            <resource>
-                <directory>src/webapp</directory>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
-
         <plugins>
 
             <!-- Checkstyle -->
