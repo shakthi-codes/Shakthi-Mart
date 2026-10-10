@@ -565,10 +565,10 @@ public class ServiceServlet extends HttpServlet {
         out.println("<div class='header'>");
 
         out.println(
-                "<h1>Shakthi Mart 🛠️</h1>");
+                "<h1>Shakthi Mart &#128640;</h1>");
 
         out.println(
-                "<p>Service Marketplace • " +
+                "<p>Service Marketplace &#8226; " +
                 "Connect Skills with Real Needs</p>");
 
         out.println("<div class='nav'>");
@@ -576,12 +576,12 @@ public class ServiceServlet extends HttpServlet {
         out.println(
                 "<a href='" +
                 request.getContextPath() +
-                "/services'>🏠 Services</a>");
+                "/services'>&#127968; Services</a>");
 
         out.println(
                 "<a href='" +
                 request.getContextPath() +
-                "/cart'>🛒 Cart</a>");
+                "/cart'>&#128722; Cart</a>");
 
         out.println(
                 "<a href='" +
@@ -605,17 +605,17 @@ public class ServiceServlet extends HttpServlet {
             if ("added".equals(message)) {
 
                 out.println(
-                        "Service added successfully! 🎉");
+                        "Service added successfully! &#127881;");
 
             } else if ("requested".equals(message)) {
 
                 out.println(
-                        "Service requested successfully! 📦");
+                        "Service requested successfully! &#128233;");
 
             } else if ("wishlist-added".equals(message)) {
 
                 out.println(
-                        "Service added to wishlist! 💜");
+                        "Service added to wishlist! &#128150;");
 
             } else if ("wishlist-removed".equals(message)) {
 
@@ -625,7 +625,7 @@ public class ServiceServlet extends HttpServlet {
             } else if ("cart-added".equals(message)) {
 
                 out.println(
-                        "Service added to cart successfully! 🛒");
+                        "Service added to cart successfully! &#128722;");
 
             } else if ("error".equals(message)) {
 
@@ -644,7 +644,7 @@ public class ServiceServlet extends HttpServlet {
 
             out.println(
                     "<div class='review-success'>" +
-                    "⭐ Thank you! Your rating and feedback " +
+                    "&#11088; Thank you! Your rating and feedback " +
                     "were added successfully!" +
                     "</div>");
         }
@@ -673,7 +673,7 @@ public class ServiceServlet extends HttpServlet {
         out.println("<div class='search-box'>");
 
         out.println(
-                "<h2>🔍 Find the Perfect Service</h2>");
+                "<h2>&#128269; Find the Perfect Service</h2>");
 
         out.println(
                 "<form method='get' " +
@@ -695,7 +695,7 @@ public class ServiceServlet extends HttpServlet {
                 "<select name='category'>");
 
         out.println(
-                "<option value='All'>📂 All Categories</option>");
+                "<option value='All'>&#128218; All Categories</option>");
 
         String[] categories = {
             "Technology",
@@ -735,7 +735,7 @@ public class ServiceServlet extends HttpServlet {
         out.println(
                 "<button class='search-button' " +
                 "type='submit'>" +
-                "Search 🔎</button>");
+                "Search &#128270;</button>");
 
         out.println("</div>");
 
@@ -752,7 +752,7 @@ public class ServiceServlet extends HttpServlet {
                 "<a class='category-chip' " +
                 "href='" +
                 request.getContextPath() +
-                "/services'>✨ All</a>");
+                "/services'>&#10004; All</a>");
 
         for (String cat : categories) {
 
@@ -780,7 +780,7 @@ public class ServiceServlet extends HttpServlet {
         out.println("<div class='offer-box'>");
 
         out.println(
-                "<h2>➕ Offer Your Service</h2>");
+                "<h2>&#128188; Offer Your Service</h2>");
 
         out.println(
                 "<p>Have a skill? Share it with " +
@@ -811,7 +811,7 @@ public class ServiceServlet extends HttpServlet {
                 "placeholder='Describe your service...' " +
                 "required></textarea>");
 
-        out.println("<label>Price (₹)</label>");
+        out.println("<label>Price (&#8377;)</label>");
 
         out.println(
                 "<input type='number' " +
@@ -846,7 +846,7 @@ public class ServiceServlet extends HttpServlet {
 
         out.println(
                 "<button type='submit'>" +
-                "Offer Service 🚀</button>");
+                "Offer Service &#128640;</button>");
 
         out.println("</form>");
 
@@ -859,7 +859,7 @@ public class ServiceServlet extends HttpServlet {
         out.println("<div class='services-title'>");
 
         out.println(
-                "<h2>🛍️ Available Services</h2>");
+                "<h2>&#128722; Available Services</h2>");
 
         out.println(
                 "<span class='result-count'>" +
@@ -877,7 +877,7 @@ public class ServiceServlet extends HttpServlet {
             out.println("<div class='empty'>");
 
             out.println(
-                    "<h3>😕 No services found</h3>");
+                    "<h3>&#128100; No services found</h3>");
 
             out.println(
                     "<p>Try another search or category.</p>");
@@ -963,7 +963,7 @@ public class ServiceServlet extends HttpServlet {
 
                 out.println(
                         "<p class='creator'>" +
-                        "👤 Created by: " +
+                        "&#128100; Created by: " +
                         escapeHtml(
                                 creatorName) +
                         "</p>");
@@ -993,7 +993,7 @@ public class ServiceServlet extends HttpServlet {
                  */
 
                 out.println(
-                        "<p class='price'>₹" +
+                        "<p class='price'>&#8377;" +
                         String.format(
                                 "%.2f",
                                 service.getPrice()) +
@@ -1007,7 +1007,7 @@ public class ServiceServlet extends HttpServlet {
                         "<div class='rating-box'>");
 
                 out.println(
-                        "<strong>⭐ Rating</strong>");
+                        "<strong>&#11088; Rating</strong>");
 
                 if (averageRating > 0) {
 
@@ -1032,7 +1032,7 @@ public class ServiceServlet extends HttpServlet {
 
                     out.println(
                             "<p>No ratings yet. " +
-                            "Be the first to review! ⭐</p>");
+                            "Be the first to review! &#11088;</p>");
                 }
 
                 out.println("</div>");
@@ -1043,7 +1043,7 @@ public class ServiceServlet extends HttpServlet {
 
                 out.println(
                         "<p class='score'>" +
-                        "❤️ Wishlist Score: " +
+                        "&#11088; Wishlist Score: " +
                         wishlistCount +
                         "</p>");
 
@@ -1076,7 +1076,7 @@ public class ServiceServlet extends HttpServlet {
 
                     out.println(
                             "<button type='submit'>" +
-                            "💜 Remove Wishlist" +
+                            "&#128150; Remove Wishlist" +
                             "</button>");
 
                 } else {
@@ -1088,7 +1088,7 @@ public class ServiceServlet extends HttpServlet {
 
                     out.println(
                             "<button type='submit'>" +
-                            "♡ Wishlist" +
+                            "&#9825; Wishlist" +
                             "</button>");
                 }
 
@@ -1118,7 +1118,7 @@ public class ServiceServlet extends HttpServlet {
 
                 out.println(
                         "<button type='submit'>" +
-                        "🛒 Add to Cart" +
+                        "&#128722; Add to Cart" +
                         "</button>");
 
                 out.println("</form>");
@@ -1147,7 +1147,7 @@ public class ServiceServlet extends HttpServlet {
 
                 out.println(
                         "<button type='submit'>" +
-                        "📦 Request Service" +
+                        "&#128233; Request Service" +
                         "</button>");
 
                 out.println("</form>");
@@ -1162,7 +1162,7 @@ public class ServiceServlet extends HttpServlet {
                         "<div class='review-section'>");
 
                 out.println(
-                        "<h4>⭐ Give Your Feedback</h4>");
+                        "<h4>&#11088; Give Your Feedback</h4>");
 
                 out.println(
                         "<form method='post' " +
@@ -1187,19 +1187,19 @@ public class ServiceServlet extends HttpServlet {
                         "Select rating</option>");
 
                 out.println(
-                        "<option value='5'>⭐⭐⭐⭐⭐ Excellent</option>");
+                        "<option value='5'>&#11088;&#11088;&#11088;&#11088;&#11088; Excellent</option>");
 
                 out.println(
-                        "<option value='4'>⭐⭐⭐⭐ Very Good</option>");
+                        "<option value='4'>&#11088;&#11088;&#11088;&#11088; Very Good</option>");
 
                 out.println(
-                        "<option value='3'>⭐⭐⭐ Good</option>");
+                        "<option value='3'>&#11088;&#11088;&#11088; Good</option>");
 
                 out.println(
-                        "<option value='2'>⭐⭐ Fair</option>");
+                        "<option value='2'>&#11088;&#11088; Fair</option>");
 
                 out.println(
-                        "<option value='1'>⭐ Poor</option>");
+                        "<option value='1'>&#11088; Poor</option>");
 
                 out.println("</select>");
 
@@ -1210,7 +1210,7 @@ public class ServiceServlet extends HttpServlet {
 
                 out.println(
                         "<button type='submit'>" +
-                        "⭐ Submit Review</button>");
+                        "&#11088; Submit Review</button>");
 
                 out.println("</form>");
 
@@ -1221,7 +1221,7 @@ public class ServiceServlet extends HttpServlet {
                 if (!reviews.isEmpty()) {
 
                     out.println(
-                            "<h4>💬 Customer Feedback</h4>");
+                            "<h4>&#128172; Customer Feedback</h4>");
 
                     for (Review review : reviews) {
 
@@ -1241,7 +1241,7 @@ public class ServiceServlet extends HttpServlet {
 
                             out.println(
                                     "<div class='comment'>" +
-                                    "💬 " +
+                                    "&#128172; " +
                                     escapeHtml(
                                             review.getComment()) +
                                     "</div>");
@@ -1260,6 +1260,34 @@ public class ServiceServlet extends HttpServlet {
         }
 
         out.println("</div>");
+        out.println("<style>");
+        out.println("#sm-chat-btn{position:fixed;bottom:22px;right:22px;background:#6c3bd1;color:white;border:0;border-radius:50px;padding:14px 20px;cursor:pointer;z-index:9999;font-size:16px;}");
+        out.println("#sm-chat-box{display:none;position:fixed;bottom:82px;right:22px;width:320px;max-width:calc(100vw - 44px);height:400px;max-height:65vh;background:white;border:1px solid #ddd;border-radius:14px;box-shadow:0 4px 20px #0003;z-index:9999;overflow:hidden;}");
+        out.println("#sm-chat-head{background:#6c3bd1;color:white;padding:14px;font-weight:bold;}");
+        out.println("#sm-chat-messages{height:275px;overflow-y:auto;padding:12px;font-size:14px;}");
+        out.println("#sm-chat-form{display:flex;gap:6px;padding:10px;border-top:1px solid #ddd;}");
+        out.println("#sm-chat-input{min-width:0;flex:1;padding:9px;border:1px solid #ccc;border-radius:8px;}");
+        out.println("#sm-chat-form button{background:#6c3bd1;color:white;border:0;border-radius:8px;padding:9px;cursor:pointer;}");
+        out.println("</style>");
+
+        out.println("<button id='sm-chat-btn' type='button' aria-expanded='false'>💬 Chat with us</button>");
+        out.println("<section id='sm-chat-box' aria-label='Shakthi Mart Assistant'>");
+        out.println("<div id='sm-chat-head'>💜 Shakthi Mart Assistant <button id='sm-chat-close' type='button' style='float:right'>✕</button></div>");
+        out.println("<div id='sm-chat-messages' aria-live='polite'><p>Hi! Ask me about services, prices, Python, design or tutoring.</p></div>");
+        out.println("<form id='sm-chat-form'>");
+        out.println("<input id='sm-chat-input' maxlength='500' placeholder='Ask about services...' required>");
+        out.println("<button type='submit'>Send</button>");
+        out.println("</form></section>");
+
+        out.println("<script>");
+        out.println("(() => {");
+        out.println("const btn=document.getElementById('sm-chat-btn'), box=document.getElementById('sm-chat-box'), close=document.getElementById('sm-chat-close'), form=document.getElementById('sm-chat-form'), input=document.getElementById('sm-chat-input'), messages=document.getElementById('sm-chat-messages');");
+        out.println("btn.addEventListener('click',()=>{box.style.display=box.style.display==='block'?'none':'block';btn.setAttribute('aria-expanded',box.style.display==='block');});");
+        out.println("close.addEventListener('click',()=>{box.style.display='none';btn.setAttribute('aria-expanded','false');});");
+        out.println("function addMessage(label,text){const p=document.createElement('p');const b=document.createElement('b');b.textContent=label+': ';p.appendChild(b);p.appendChild(document.createTextNode(text));messages.appendChild(p);messages.scrollTop=messages.scrollHeight;}");
+        out.println("form.addEventListener('submit',async e=>{e.preventDefault();const message=input.value.trim();if(!message)return;addMessage('You',message);input.value='';input.disabled=true;try{const response=await fetch('" + request.getContextPath() + "/api/chat',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:'message='+encodeURIComponent(message)});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.error||'Request failed');addMessage('Assistant',data.reply);}catch(error){addMessage('Assistant','Sorry, I could not connect. Please try again.');}finally{input.disabled=false;input.focus();}});");
+        out.println("})();");
+        out.println("</script>");
 
         out.println("</body>");
         out.println("</html>");
@@ -1715,41 +1743,29 @@ public class ServiceServlet extends HttpServlet {
      * CATEGORY EMOJI
      */
 
-    private String getCategoryEmoji(
-            String category) {
-
+    private String getCategoryEmoji(String category) {
         if (category == null) {
-            return "🛠️";
+            return "&#128640;";
         }
-
         switch (category.toLowerCase()) {
-
             case "technology":
-                return "💻";
-
+                return "&#128187;";
             case "design":
-                return "🎨";
-
+                return "&#127912;";
             case "education":
-                return "📚";
-
+                return "&#128218;";
             case "writing":
-                return "✍️";
-
+                return "&#9997;";
             case "digital marketing":
-                return "📱";
-
+                return "&#128227;";
             case "media":
-                return "🎬";
-
+                return "&#127909;";
             case "business":
-                return "💼";
-
+                return "&#128188;";
             case "data analysis":
-                return "📊";
-
+                return "&#128202;";
             default:
-                return "🛠️";
+                return "&#128640;";
         }
     }
 
@@ -1769,9 +1785,9 @@ public class ServiceServlet extends HttpServlet {
         for (int i = 1; i <= 5; i++) {
 
             if (i <= rounded) {
-                stars.append("★");
+                stars.append("&#9733;");
             } else {
-                stars.append("☆");
+                stars.append("&#9734;");
             }
         }
 
@@ -1791,9 +1807,9 @@ public class ServiceServlet extends HttpServlet {
         for (int i = 1; i <= 5; i++) {
 
             if (i <= rating) {
-                stars.append("★");
+                stars.append("&#9733;");
             } else {
-                stars.append("☆");
+                stars.append("&#9734;");
             }
         }
 

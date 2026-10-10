@@ -4,165 +4,175 @@ import model.Order;
 import util.DBUtil;
 
 import javax.servlet.ServletContext;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAOImpl implements OrderDAO {
 
-    private final ServletContext context;
+private final ServletContext context;
 
-    public OrderDAOImpl(ServletContext context) {
-        this.context = context;
-    }
+public OrderDAOImpl(ServletContext context) {
+    this.context = context;
+}
 
-    @Override
-    public int createOrder(Order order) {
+@Override
+public int createOrder(Order order) {
+    String sql = """
+            INSERT INTO orders
+            (buyer_id, total_amount, status)
+            VALUES (?, ?, ?)
+            """;
 
-        String sql = """
-                INSERT INTO orders
-                (buyer_id, total_amount, status)
-                VALUES (?, ?, ?)
-                """;
+    try (Connection connection = DBUtil.getConnection(context);
+         PreparedStatement statement = connection.prepareStatement(
+                 sql, Statement.RETURN_GENERATED_KEYS)) {
 
-        try (Connection connection =
-                     DBUtil.getConnection(context);
-             PreparedStatement statement =
-                     connection.prepareStatement(
-                             sql,
-                             Statement.RETURN_GENERATED_KEYS)) {
+        statement.setInt(1, order.getBuyerId());
+        statement.setDouble(2, order.getTotalAmount());
+        statement.setString(3, order.getStatus());
+        statement.executeUpdate();
 
-            statement.setInt(1, order.getBuyerId());
-            statement.setDouble(2, order.getTotalAmount());
-            statement.setString(3, order.getStatus());
-
-            statement.executeUpdate();
-
-            try (ResultSet rs =
-                         statement.getGeneratedKeys()) {
-
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
+        try (ResultSet rs = statement.getGeneratedKeys()) {
+            if (rs.next()) {
+                return rs.getInt(1);
             }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Error creating order", e);
         }
-
-        return 0;
+    } catch (SQLException e) {
+        throw new RuntimeException("Error creating order", e);
     }
 
-    @Override
-    public Order findById(int orderId) {
+    return 0;
+}
 
-        String sql = """
-                SELECT id, buyer_id, total_amount,
-                       status, created_at
-                FROM orders
-                WHERE id = ?
-                """;
+@Override
+public Order findById(int orderId) {
+    String sql = """
+            SELECT id, buyer_id, total_amount, status, created_at
+            FROM orders
+            WHERE id = ?
+            """;
 
-        try (Connection connection =
-                     DBUtil.getConnection(context);
-             PreparedStatement statement =
-                     connection.prepareStatement(sql)) {
+    try (Connection connection = DBUtil.getConnection(context);
+         PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setInt(1, orderId);
+        statement.setInt(1, orderId);
 
-            try (ResultSet rs =
-                         statement.executeQuery()) {
-
-                if (rs.next()) {
-
-                    return new Order(
-                            rs.getInt("id"),
-                            rs.getInt("buyer_id"),
-                            rs.getDouble("total_amount"),
-                            rs.getString("status"),
-                            rs.getTimestamp("created_at")
-                    );
-                }
+        try (ResultSet rs = statement.executeQuery()) {
+            if (rs.next()) {
+                return new Order(
+                        rs.getInt("id"),
+                        rs.getInt("buyer_id"),
+                        rs.getDouble("total_amount"),
+                        rs.getString("status"),
+                        rs.getTimestamp("created_at")
+                );
             }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Error finding order", e);
         }
-
-        return null;
+    } catch (SQLException e) {
+        throw new RuntimeException("Error finding order", e);
     }
 
-    @Override
-    public List<Order> findByBuyerId(int buyerId) {
+    return null;
+}
 
-        List<Order> orders = new ArrayList<>();
+@Override
+public List<Order> findByBuyerId(int buyerId) {
+    List<Order> orders = new ArrayList<>();
 
-        String sql = """
-                SELECT id, buyer_id, total_amount,
-                       status, created_at
-                FROM orders
-                WHERE buyer_id = ?
-                ORDER BY created_at DESC
-                """;
+    String sql = """
+            SELECT id, buyer_id, total_amount, status, created_at
+            FROM orders
+            WHERE buyer_id = ?
+            ORDER BY created_at DESC
+            """;
 
-        try (Connection connection =
-                     DBUtil.getConnection(context);
-             PreparedStatement statement =
-                     connection.prepareStatement(sql)) {
+    try (Connection connection = DBUtil.getConnection(context);
+         PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setInt(1, buyerId);
+        statement.setInt(1, buyerId);
 
-            try (ResultSet rs =
-                         statement.executeQuery()) {
-
-                while (rs.next()) {
-
-                    orders.add(
-                            new Order(
-                                    rs.getInt("id"),
-                                    rs.getInt("buyer_id"),
-                                    rs.getDouble("total_amount"),
-                                    rs.getString("status"),
-                                    rs.getTimestamp("created_at")
-                            )
-                    );
-                }
+        try (ResultSet rs = statement.executeQuery()) {
+            while (rs.next()) {
+                orders.add(
+                        new Order(
+                                rs.getInt("id"),
+                                rs.getInt("buyer_id"),
+                                rs.getDouble("total_amount"),
+                                rs.getString("status"),
+                                rs.getTimestamp("created_at")
+                        )
+                );
             }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Error finding buyer orders", e);
         }
-
-        return orders;
+    } catch (SQLException e) {
+        throw new RuntimeException("Error finding buyer orders", e);
     }
 
-    @Override
-    public void updateStatus(
-            int orderId,
-            String status) {
+    return orders;
+}
 
-        String sql = """
-                UPDATE orders
-                SET status = ?
-                WHERE id = ?
-                """;
+@Override
+public List<Order> findBySellerId(int sellerId) {
+    List<Order> orders = new ArrayList<>();
 
-        try (Connection connection =
-                     DBUtil.getConnection(context);
-             PreparedStatement statement =
-                     connection.prepareStatement(sql)) {
+    String sql = """
+            SELECT DISTINCT o.id, o.buyer_id,
+                   o.total_amount, o.status, o.created_at
+            FROM orders o
+            JOIN order_items oi ON o.id = oi.order_id
+            JOIN services s ON oi.service_id = s.id
+            WHERE s.creator_id = ?
+            ORDER BY o.created_at DESC
+            """;
 
-            statement.setString(1, status);
-            statement.setInt(2, orderId);
+    try (Connection connection = DBUtil.getConnection(context);
+         PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.executeUpdate();
+        statement.setInt(1, sellerId);
 
-        } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Error updating order status", e);
+        try (ResultSet rs = statement.executeQuery()) {
+            while (rs.next()) {
+                orders.add(
+                        new Order(
+                                rs.getInt("id"),
+                                rs.getInt("buyer_id"),
+                                rs.getDouble("total_amount"),
+                                rs.getString("status"),
+                                rs.getTimestamp("created_at")
+                        )
+                );
+            }
         }
+    } catch (SQLException e) {
+        throw new RuntimeException("Error finding seller orders", e);
     }
+
+    return orders;
+}
+
+@Override
+public void updateStatus(int orderId, String status) {
+    String sql = """
+            UPDATE orders
+            SET status = ?
+            WHERE id = ?
+            """;
+
+    try (Connection connection = DBUtil.getConnection(context);
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setString(1, status);
+        statement.setInt(2, orderId);
+        statement.executeUpdate();
+
+    } catch (SQLException e) {
+        throw new RuntimeException("Error updating order status", e);
+    }
+}
+
 }

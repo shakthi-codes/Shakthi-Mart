@@ -12,5 +12,7 @@ public interface OrderDAO {
 
     List<Order> findByBuyerId(int buyerId);
 
+    List<Order> findBySellerId(int sellerId);
+
     void updateStatus(int orderId, String status);
 }

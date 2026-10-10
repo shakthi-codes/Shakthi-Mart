@@ -1,4 +1,4 @@
-﻿async function sendChatMessage(message, chatMessages) {
+async function sendChatMessage(message, chatMessages) {
     const response = await fetch("api/chat", {
         method: "POST",
         headers: {
